@@ -9,7 +9,7 @@
  *
  * @wordpress-plugin
  * Plugin Name: BE Tic Tac Toe
- * Description: Plugin provides a ShortCode to place a tic tac toe game on a page / post
+ * Description: Plugin provides a shortcode to place a tic tac toe game on a page / post
  * Version: 1.0.0
  * Author: Benjamin Eich
  * License:           GPL v2 or later
