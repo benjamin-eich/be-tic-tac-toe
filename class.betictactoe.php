@@ -1,6 +1,6 @@
 <?php
 
-class TicTacToe {
+class BETicTacToe {
     private static $initiated = false;
 
     public static function init() {
@@ -37,19 +37,19 @@ class TicTacToe {
      * Shortcodes
      */
     public static function shortcode_game($atts = [], $content = null) {
-        $game_state = self::game_get_state();
+        $state = self::game_get_state();
 
         $content = '<div class="tictactoe" data-symbol-player-x="' . TICTACTOE__SYMBOL_PLAYER_X . '" data-symbol-player-o="' . TICTACTOE__SYMBOL_PLAYER_O . '">';
         
-        if ($game_state['winner'] === null) {
-            $content .= '  <div class="tictactoe_status">Next player: ' . $game_state['xIsNext'] ? TICTACTOE__SYMBOL_PLAYER_X : TICTACTOE__SYMBOL_PLAYER_O . '</div>';
+        if ($state->winner === null) {
+            $content .= '  <div class="tictactoe_status">Next player: ' . ($state->xIsNext ? TICTACTOE__SYMBOL_PLAYER_X : TICTACTOE__SYMBOL_PLAYER_O) . '</div>';
         } else {
-            $content .= '  <div class="tictactoe_status">Winner is: ' . $game_state['winner'] . '</div>';
+            $content .= '  <div class="tictactoe_status">Winner is: ' . $state->winner . '</div>';
         }
         
         $content .= '  <div class="tictactoe_squares">';
             for ($i=0; $i<9; $i++) {
-                $content .= '    <div class="tictactoe_cell" rel="' . $i . '">' . ($game_state['squares'][$i] ?? '') . '</div>';
+                $content .= '    <div class="tictactoe_cell" rel="' . $i . '">' . ($state->squares[$i] ?? '') . '</div>';
             }
         $content .= '  </div>';
         $content .= '  <button class="tictactoe_reset">Reset Game</button>';
@@ -92,12 +92,12 @@ class TicTacToe {
         $square = $_POST['square'];
         $player = $_POST['player'];
 
-        if ($state['squares'][$square] === null) {
-            $state['squares'][$square] = $player;
-            $state['xIsNext'] = !$state['xIsNext'];
+        if ($state->squares[$square] === null) {
+            $state->squares[$square] = $player;
+            $state->xIsNext = !$state->xIsNext;
         }
 
-        $state['winner'] = self::game_get_winner($state['squares']);
+        $state->winner = self::game_get_winner($state->squares);
 
         $_SESSION[TICTACTOE__SESSION_STATE_VAR_NAME] = $state;
 
@@ -106,19 +106,15 @@ class TicTacToe {
     }
 
     private static function game_reset_state() {
-        $_SESSION[TICTACTOE__SESSION_STATE_VAR_NAME] = [
-            'squares' => [
-                null, null, null,
-                null, null, null,
-                null, null, null
-            ],
-            'xIsNext' => false,
-            'winner' => null
-        ];
+        $_SESSION[TICTACTOE__SESSION_STATE_VAR_NAME] = new BETicTacToe_GameState();
     }
 
     private static function game_get_state() {
-        if (!isset($_SESSION[TICTACTOE__SESSION_STATE_VAR_NAME])) {
+        if (
+            !isset($_SESSION[TICTACTOE__SESSION_STATE_VAR_NAME])
+            || gettype($_SESSION[TICTACTOE__SESSION_STATE_VAR_NAME]) !== BETicTacToe_GameState::class
+            || $_SESSION[TICTACTOE__SESSION_STATE_VAR_NAME]::$version !== BETicTacToe_GameState::$version
+            ) {
             self::game_reset_state();
         }
 
@@ -143,5 +139,34 @@ class TicTacToe {
             }
           }
           return null;
+    }
+}
+
+class BETicTacToe_GameState implements JsonSerializable {
+    public $squares;
+    public $winner;
+    public $xIsNext;
+    public static $version = 1;
+
+    public function __construct() {
+        $this->reset();
+    }
+
+    public function reset() {
+        $this->squares = [
+            null, null, null,
+            null, null, null,
+            null, null, null
+        ];
+        $this->winner = null;
+        $this->xIsNext = false;
+    }
+
+    public function jsonSerialize() {
+        return [
+            "squares" => $this->squares,
+            "winner" => $this->winner,
+            "xIsNext" => $this->xIsNext
+        ];
     }
 }

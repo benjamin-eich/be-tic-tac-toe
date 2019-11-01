@@ -41,6 +41,6 @@ define( 'TICTACTOE__SESSION_STATE_VAR_NAME', 'be-tic-tac-toe-state' );
 define( 'TICTACTOE__SYMBOL_PLAYER_O', '◯' );
 define( 'TICTACTOE__SYMBOL_PLAYER_X', '╳' );
 
-require_once( TICTACTOE__PLUGIN_DIR . 'class.tictactoe.php' );
+require_once( TICTACTOE__PLUGIN_DIR . 'class.betictactoe.php' );
 
-add_action('init', ['TicTacToe', 'init']);
+add_action('init', ['BETicTacToe', 'init']);
