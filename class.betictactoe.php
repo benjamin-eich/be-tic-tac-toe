@@ -95,9 +95,8 @@ class BETicTacToe {
         if ($state->squares[$square] === null) {
             $state->squares[$square] = $player;
             $state->xIsNext = !$state->xIsNext;
+            $state->winner = self::game_get_winner($state->squares);
         }
-
-        $state->winner = self::game_get_winner($state->squares);
 
         $_SESSION[TICTACTOE__SESSION_STATE_VAR_NAME] = $state;
 
@@ -112,7 +111,7 @@ class BETicTacToe {
     private static function game_get_state() {
         if (
             !isset($_SESSION[TICTACTOE__SESSION_STATE_VAR_NAME])
-            || gettype($_SESSION[TICTACTOE__SESSION_STATE_VAR_NAME]) !== BETicTacToe_GameState::class
+            || get_class($_SESSION[TICTACTOE__SESSION_STATE_VAR_NAME]) !== BETicTacToe_GameState::class
             || $_SESSION[TICTACTOE__SESSION_STATE_VAR_NAME]::$version !== BETicTacToe_GameState::$version
             ) {
             self::game_reset_state();
