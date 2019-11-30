@@ -57,8 +57,10 @@ let tictactoe = {
             }
         }
     
-        if (tictactoe.state.winner === null) {
+        if (tictactoe.state.winner === null && tictactoe.state.bestNextMove !== -1) {
             tictactoe.game_element.find('.tictactoe_status').text('Next player: ' + (tictactoe.state.xIsNext ? tictactoe.player_symbol_x : tictactoe.player_symbol_o));
+        } else if (tictactoe.state.winner === null && tictactoe.state.bestNextMove === -1) {
+            tictactoe.game_element.find('.tictactoe_status').text('Good game! It\'s tied.');
         } else {
             tictactoe.game_element.find('.tictactoe_status').text('Winner is: ' + tictactoe.state.winner);
         }

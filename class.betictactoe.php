@@ -87,21 +87,35 @@ class BETicTacToe {
     public static function game_ajax_set_move() {
         check_ajax_referer( 'tic-tac-toe-ajax-nonce', 'security' );
 
-        $state = self::game_get_state();
-
         $square = $_POST['square'];
         $player = $_POST['player'];
+
+        self::make_move($square, $player);
+
+        // Do AI move
+        $state = self::game_get_state();
+        if ($state->xIsNext === true) {
+            self::make_move($state->bestNextMove, TICTACTOE__SYMBOL_PLAYER_X);
+        }
+
+        echo json_encode(self::game_get_state());
+        wp_die();
+    }
+
+    private static function make_move($square, $player) {
+        
+        $state = self::game_get_state();
 
         if ($state->squares[$square] === null) {
             $state->squares[$square] = $player;
             $state->xIsNext = !$state->xIsNext;
             $state->winner = self::game_get_winner($state->squares);
+
+            self::minimax($state->squares, $state->xIsNext ? TICTACTOE__SYMBOL_PLAYER_X : TICTACTOE__SYMBOL_PLAYER_O, 0, $bestNextMove);
+            $state->bestNextMove = $bestNextMove;
         }
 
         $_SESSION[TICTACTOE__SESSION_STATE_VAR_NAME] = $state;
-
-        echo json_encode($state);
-        wp_die();
     }
 
     private static function game_reset_state() {
@@ -139,13 +153,50 @@ class BETicTacToe {
           }
           return null;
     }
+
+    private static $playerRawValues = [
+        TICTACTOE__SYMBOL_PLAYER_X => -1,
+        TICTACTOE__SYMBOL_PLAYER_O => 1
+    ];
+
+    private static function minimax($board, $player, $depth = 0, &$bestNextMove = -1) {
+        if (($winner = self::game_get_winner($board)) !== null) {
+          return self::$playerRawValues[$winner] * self::$playerRawValues[$player]; // -1 * -1 || 1 * 1
+        }
+    
+        $move = -1;
+        $score = -2;
+    
+        for ($i = 0; $i < 9; ++$i) { // For all moves
+            if ($board[$i] === null) { // Only possible moves
+                $boardWithNewMove = $board; // Copy board to make it mutable
+                $boardWithNewMove[$i] = $player; // Try the move
+                $scoreForTheMove = -self::minimax($boardWithNewMove, ($player === TICTACTOE__SYMBOL_PLAYER_X ? TICTACTOE__SYMBOL_PLAYER_O : TICTACTOE__SYMBOL_PLAYER_X), $depth+1); // Count negative score for oponnent
+                if ($scoreForTheMove > $score) {
+                    $score = $scoreForTheMove;
+                    $move = $i;
+                } // Picking move that gives oponnent the worst score
+            }
+        }
+
+        if ($depth === 0) {
+            $bestNextMove = $move;
+        }
+
+        if ($move === -1) {
+            return 0; // No move - it's a draw
+        }
+
+        return $score;
+    }
 }
 
 class BETicTacToe_GameState implements JsonSerializable {
     public $squares;
     public $winner;
     public $xIsNext;
-    public static $version = 1;
+    public $bestNextMove;
+    public static $version = 2;
 
     public function __construct() {
         $this->reset();
@@ -159,13 +210,15 @@ class BETicTacToe_GameState implements JsonSerializable {
         ];
         $this->winner = null;
         $this->xIsNext = false;
+        $this->bestNextMove = null;
     }
 
     public function jsonSerialize() {
         return [
             "squares" => $this->squares,
             "winner" => $this->winner,
-            "xIsNext" => $this->xIsNext
+            "xIsNext" => $this->xIsNext,
+            "bestNextMove" => $this->bestNextMove,
         ];
     }
 }
