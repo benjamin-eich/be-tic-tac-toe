@@ -46,10 +46,14 @@ let tictactoe = {
         }, 'json');
     },
     render_game_state() {
+        tictactoe.game_element.find('.tictactoe_cell.hint').removeClass('hint');
         for (var i in tictactoe.state.squares) {
             switch (tictactoe.state.squares[i]) {
                 case null:
                         tictactoe.game_element.find('.tictactoe_cell[rel="' + i + '"]').html('');
+                        if (i == tictactoe.state.bestNextMove) {
+                            tictactoe.game_element.find('.tictactoe_cell[rel="' + i + '"]').addClass('hint');
+                        }
                     break;
                 default:
                         tictactoe.game_element.find('.tictactoe_cell[rel="' + i + '"]').html(tictactoe.state.squares[i]);
