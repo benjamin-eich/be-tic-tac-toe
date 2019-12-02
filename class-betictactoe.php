@@ -21,7 +21,7 @@
  * along with Tic Tac Toe. If not, see {URI to Plugin License}.
  */
 
-require_once './class-betictactoe-gamestate.php';
+require_once 'class-betictactoe-gamestate.php';
 
 /**
  * BETicTacToe
