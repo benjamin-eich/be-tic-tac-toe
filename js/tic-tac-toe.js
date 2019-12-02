@@ -51,7 +51,7 @@ let tictactoe = {
             switch (tictactoe.state.squares[i]) {
                 case null:
                         tictactoe.game_element.find('.tictactoe_cell[rel="' + i + '"]').html('');
-                        if (i == tictactoe.state.bestNextMove) {
+                        if (i == tictactoe.state.best_next_move) {
                             tictactoe.game_element.find('.tictactoe_cell[rel="' + i + '"]').addClass('hint');
                         }
                     break;
@@ -61,9 +61,9 @@ let tictactoe = {
             }
         }
     
-        if (tictactoe.state.winner === null && tictactoe.state.bestNextMove !== -1) {
-            tictactoe.game_element.find('.tictactoe_status').text('Next player: ' + (tictactoe.state.xIsNext ? tictactoe.player_symbol_x : tictactoe.player_symbol_o));
-        } else if (tictactoe.state.winner === null && tictactoe.state.bestNextMove === -1) {
+        if (tictactoe.state.winner === null && tictactoe.state.best_next_move !== -1) {
+            tictactoe.game_element.find('.tictactoe_status').text('Next player: ' + (tictactoe.state.x_is_next ? tictactoe.player_symbol_x : tictactoe.player_symbol_o));
+        } else if (tictactoe.state.winner === null && tictactoe.state.best_next_move === -1) {
             tictactoe.game_element.find('.tictactoe_status').text('Good game! It\'s tied.');
         } else {
             tictactoe.game_element.find('.tictactoe_status').text('Winner is: ' + tictactoe.state.winner);
@@ -73,7 +73,7 @@ let tictactoe = {
         if (!tictactoe.request_running && tictactoe.state.squares[i] === null) {
             tictactoe.request_running = true;
     
-            let player_symbol = tictactoe.state.xIsNext ? tictactoe.player_symbol_x : tictactoe.player_symbol_o;
+            let player_symbol = tictactoe.state.x_is_next ? tictactoe.player_symbol_x : tictactoe.player_symbol_o;
     
             var request = {
                 'action': 'tictactoe_set_move',

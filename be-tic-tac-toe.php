@@ -17,17 +17,17 @@
  * Text Domain: be-tic-tac-toe
  */
 
- /*
+/*
 BE Tic Tac Toe is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 2 of the License, or
 any later version.
- 
+
 Tic Tac Toe is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with Tic Tac Toe. If not, see {URI to Plugin License}.
 */
@@ -41,6 +41,6 @@ define( 'TICTACTOE__SESSION_STATE_VAR_NAME', 'be-tic-tac-toe-state' );
 define( 'TICTACTOE__SYMBOL_PLAYER_O', '◯' );
 define( 'TICTACTOE__SYMBOL_PLAYER_X', '╳' );
 
-require_once( TICTACTOE__PLUGIN_DIR . 'class.betictactoe.php' );
+require_once TICTACTOE__PLUGIN_DIR . 'class-betictactoe.php';
 
-add_action('init', ['BETicTacToe', 'init']);
+add_action( 'init', array( 'BETicTacToe', 'init' ) );
