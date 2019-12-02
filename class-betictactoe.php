@@ -1,5 +1,29 @@
 <?php
 /**
+ * BE Tic Tac Toe
+ *
+ * @package           BETicTacToe
+ * @author            Benjamin Eich
+ * @copyright         2019 Your Name or Company Name
+ * @license           GPL-2.0-or-later
+ *
+ * BE Tic Tac Toe is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License, or
+ * any later version.
+ *
+ * Tic Tac Toe is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Tic Tac Toe. If not, see {URI to Plugin License}.
+ */
+
+require_once './class-betictactoe-gamestate.php';
+
+/**
  * BETicTacToe
  *
  * This is core class
@@ -70,7 +94,7 @@ class BETicTacToe {
 	}
 
 	public static function enqueue_frontend_stuff() {
-		wp_enqueue_script( 'tic-tac-toe-javascript', plugins_url( '/js/tic-tac-toe.js', __FILE__ ), array( 'jquery' ) );
+		wp_enqueue_script( 'tic-tac-toe-javascript', plugins_url( '/js/tic-tac-toe.js', __FILE__ ), array( 'jquery' ), '1.0.0', true );
 
 		// in JavaScript, object properties are accessed as ajax_object.ajax_url, ajax_object.we_value
 		$ajax_nonce = wp_create_nonce( 'tic-tac-toe-ajax-nonce' );
@@ -83,13 +107,13 @@ class BETicTacToe {
 			)
 		);
 
-		wp_enqueue_style( 'tic-tac-toe-styles', plugins_url( '/css/tic-tac-toe.css', __FILE__ ) );
+		wp_enqueue_style( 'tic-tac-toe-styles', plugins_url( '/css/tic-tac-toe.css', __FILE__ ), array(), '1.0.0' );
 	}
 
 	public static function game_ajax_get_state() {
 		check_ajax_referer( 'tic-tac-toe-ajax-nonce', 'security' );
 
-		echo json_encode( self::game_get_state() );
+		echo wp_json_encode( self::game_get_state() );
 		wp_die();
 	}
 
@@ -98,7 +122,7 @@ class BETicTacToe {
 
 		self::game_reset_state();
 
-		echo json_encode( self::game_get_state() );
+		echo wp_json_encode( self::game_get_state() );
 		wp_die();
 	}
 
@@ -116,7 +140,7 @@ class BETicTacToe {
 			self::make_move( $state->best_next_move, TICTACTOE__SYMBOL_PLAYER_X );
 		}
 
-		echo json_encode( self::game_get_state() );
+		echo wp_json_encode( self::game_get_state() );
 		wp_die();
 	}
 
@@ -207,43 +231,5 @@ class BETicTacToe {
 		}
 
 		return $score;
-	}
-}
-
-class BETicTacToe_GameState implements JsonSerializable {
-	public $squares;
-	public $winner;
-	public $x_is_next;
-	public $best_next_move;
-	public static $version = 2;
-
-	public function __construct() {
-		$this->reset();
-	}
-
-	public function reset() {
-		$this->squares        = array(
-			null,
-			null,
-			null,
-			null,
-			null,
-			null,
-			null,
-			null,
-			null,
-		);
-		$this->winner         = null;
-		$this->x_is_next      = false;
-		$this->best_next_move = null;
-	}
-
-	public function jsonSerialize() {
-		return array(
-			'squares'        => $this->squares,
-			'winner'         => $this->winner,
-			'x_is_next'      => $this->x_is_next,
-			'best_next_move' => $this->best_next_move,
-		);
 	}
 }
