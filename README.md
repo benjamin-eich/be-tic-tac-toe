@@ -1,6 +1,6 @@
 # BE Tic Tac Toe
 
-A simple tic tac toe game for your wordpress. Simply place the shortcode [be-tic-tac-toe] anywhere in your page or posts.
+A simple tic tac toe game for your WordPress site. Simply place the shortcode [be-tic-tac-toe] anywhere in your page or posts.
 
 ## Installation
 
